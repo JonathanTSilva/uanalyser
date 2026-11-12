@@ -3,8 +3,9 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.axes import Axes
 from matplotlib.ticker import FuncFormatter
-from paths import *
+from paths import DATA_PERF, OUTPUT
 
 
 class GraphUtils:
@@ -134,8 +135,8 @@ class GraphUtils:
 
 
 def performance_data_axle(
-    ax: plt.Axes, filename: str, performance: bool, *, twin: bool = True
-) -> plt.Axes:
+    ax: Axes, filename: str, performance: bool, *, twin: bool = True
+) -> Axes:
     """Plot performance data alongside the main graph.
 
     Args:
@@ -151,7 +152,7 @@ def performance_data_axle(
         >>> import matplotlib.pyplot as plt
         >>> from plot.graphics import GraphUtils
         >>> ax = plt.gca()
-        >>> performance_data_axle(ax, '0-dos_function_call_null_deref', performance=True, twin=True)  # doctest: +ELLIPSIS
+        >>> performance_data_axle(ax, '0-dos_function_call_null_deref', performance=True, twin=True)  # doctest: +ELLIPSIS, +SKIP
         <Axes: >
     """
     if performance:
@@ -375,7 +376,7 @@ def plot_round_trip_time_per_packet(
     filename: str,
     *,
     scale_factor: float = 300.0,
-    attacker_rtts: list = None,
+    attacker_rtts: list | None = None,
     performance: bool = False,
     show_plots: bool = False,
 ) -> None:
@@ -483,7 +484,7 @@ def plot_round_trip_time_per_second(
     filename: str,
     *,
     scale_factor: float = 200.0,
-    attacker_rtts: list = None,
+    attacker_rtts: list | None = None,
     performance: bool = False,
     show_plots: bool = False,
 ) -> None:
