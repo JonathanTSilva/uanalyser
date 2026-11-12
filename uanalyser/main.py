@@ -1,10 +1,24 @@
 import os
 
-import scapy.all as scapy
-from paths import *
-from plot.graphics import *
-from preprocessing.file_handling import *
-from preprocessing.operations import *
+import matplotlib.pyplot as plt
+from paths import DATA_PCAPNG, DATA_PERF
+from plot.graphics import (
+    GraphUtils,
+    plot_packets_per_second,
+    plot_performance_data,
+    plot_round_trip_time_per_packet,
+    plot_round_trip_time_per_second,
+    plot_throughput,
+)
+from preprocessing.file_handling import extract_attack_name, open_pcapng_file
+from preprocessing.operations import (
+    calculate_package_time_difference,
+    calculate_round_trip_time,
+    calculate_throughput_and_packets,
+    define_communication_type,
+    detect_opcua_attack,
+    is_opcua_packet,
+)
 
 SERVER_IP = '192.168.164.101'
 CLIENTS_IPS = ['192.168.164.102']
@@ -81,8 +95,8 @@ def main(pcapng_file, *, show_plots=False):
 
     # Calculate the throughput in kbps and the packets per second
     period = chronology_packets[-1][1]
-    throughput_kbps, opcua_packets_per_second = calculate_throughput_and_packets(
-        capture, chronology_packets, period
+    throughput_kbps, opcua_packets_per_second = (
+        calculate_throughput_and_packets(capture, chronology_packets, period)
     )
     seconds = list(range(1, len(throughput_kbps) + 1))
     number_of_packets = len(chronology_packets)

@@ -30,7 +30,7 @@ def test_open_none_pcapng_file():
     error_message = '`file_path` must not be None or an empty string.'
 
     with raises(ValueError) as error:
-        open_pcapng_file(None)
+        open_pcapng_file(None)  # pyright: ignore[reportArgumentType]
 
     assert error_message == error.value.args[0]
 

@@ -1,341 +1,81 @@
-<!-- LOGO DO PROJETO -->
-<h1 align="center">
-  <br>
-  <a href="https://github.com/JonathanTSilva/FP-MastersDegree"><img src="http://portal.eesc.usp.br/comunicacao/wp-content/uploads/2020/06/logo_eesc_vertical_com_subtitulo_ingles-1.png" alt="Logo" width="200"></a>
-  <br>
-  uanalyser
-  <br>
-</h1>
+# uanalyser
 
-<h4 align="center">
-  
-➕ Traffic analyzer for intrusion detection in OPC UA networks.
+Traffic analyser for intrusion detection in OPC UA networks.
 
-</h4>
+<!-- badges:start -->
+[![Status](https://img.shields.io/badge/status-inactive-silver?style=flat-square)](https://www.repostatus.org/#inactive)
+[![CI](https://img.shields.io/github/actions/workflow/status/JonathanTSilva/uanalyser/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/JonathanTSilva/uanalyser/actions/workflows/ci.yml)
+[![Scorecard](https://img.shields.io/ossf-scorecard/github.com/JonathanTSilva/uanalyser?style=flat-square&label=scorecard)](https://scorecard.dev/viewer/?uri=github.com/JonathanTSilva/uanalyser)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![Codespaces](https://img.shields.io/badge/codespaces-open-181717?style=flat-square&logo=github)](https://codespaces.new/JonathanTSilva/uanalyser)
+<!-- badges:end -->
 
-<!-- SHIELDS DO PROJETO -->
-<p align="center">
-  <a href="https://github.com/JonathanTSilva/FP-MastersDegree/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/JonathanTSilva/FP-MastersDegree.svg?style=flat" alt="Contributors">
-  </a>
-  <a href="https://github.com/JonathanTSilva/FP-MastersDegree/network/members">
-    <img src="https://img.shields.io/github/forks/JonathanTSilva/FP-MastersDegree.svg?style=flat" alt="Members">
-  </a>
-  <a href="https://github.com/JonathanTSilva/FP-MastersDegree/stargazers">
-    <img src="https://img.shields.io/github/stars/JonathanTSilva/FP-MastersDegree.svg?style=flat" alt="Stargazers">
-  </a>
-  <a href="https://github.com/JonathanTSilva/FP-MastersDegree/issues">
-    <img src="https://img.shields.io/github/issues/JonathanTSilva/FP-MastersDegree.svg?style=flat" alt="Issues">
-  </a>
-  <a href="https://github.com/JonathanTSilva/FP-MastersDegree/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/JonathanTSilva/FP-MastersDegree.svg?style=flat" alt="License">
-  </a>
-</p>
+## What it is
 
-<!-- SUMÁRIO -->
-<details close="close" align="center">
-  <summary><b>Table of Contents</b></summary>
-    <a href="#about-the-project">About the project</a> |
-    <a href="#index">Index</a> |
-    <a href="#contributing">Contributing</a> |
-    <a href="#license">License</a> |
-    <a href="#contact">Contact</a> |
-    <a href="#"></a>
-</details>
+A research tool built for an MSc project on intrusion detection in OPC UA networks. It reads PCAPNG captures of OPC UA traffic between a server and a client, finds the packet where an attack starts, and computes throughput, OPC UA packets per second and round-trip times, optionally next to CPU and memory data recorded during the capture. It plots each result as a PNG. The project is finished and no longer maintained.
 
-<!-- CORPO-->
-## 📃 About the project
+## Quick start
 
-<table>
-  <tr>
-    <td>
-    Resumo. [EMOJI]
-      <details open>
-      <summary>Informações adicionais</summary>
-      <br>
-        Texto da informações adicionais
-      </details>
-    </td>
-  </tr>
-</table>
+```sh
+git clone https://github.com/JonathanTSilva/uanalyser.git
+cd uanalyser
+uv sync
+uv run pytest
+```
 
-<!-- 
-## 🔎 Index
+Or open it in a dev container or GitHub Codespaces.
 
-- [](https://github.com/JonathanTSilva)
-  - [](https://github.com/JonathanTSilva) -->
+## Usage
 
-## 🤝 Contributing
+The code is a set of scripts run from the checkout, not an installable package. Analyse one capture with `main`, which writes the plots to `uanalyser/output/`:
 
-If you want to contribute to this project and improve it, your help is always welcome! Please read the [contribution guidelines][A] to properly contribute. :tada:
+```sh
+PYTHONPATH=uanalyser uv run python -c "from main import main; main('tests/assets/0-dos_attack_example.pcapng')"
+```
 
-<!-- LICENÇA -->
-<a href="https://github.com/JonathanTSilva/FP-MastersDegree/blob/main/LICENSE"><img width="100px" src="https://miro.medium.com/max/886/1*C87EjxGeMPrkTuVRVWVg4w.png" align="right" /></a>
+Capture file names follow `<type>-<attack name>.pcapng`, where the type is the OPC UA security mode: `0` for None, `1` for Sign and `2` for Sign & Encrypt. Pass `show_plots=True` to open the plots instead of only saving them. The full capture set and the performance CSV files used in the research are not in this repository: `uanalyser/paths.py` expects them under `Data/`.
 
-## 📝 License
+### Test captures
 
-Distributed by **MIT License**. See [LICENSE][B] for more information.
+Guide to the capture files used while developing the tool. Each row is one capture, named `<type>-<file name>.pcapng`. The Attack column gives the packet number and time (seconds) where the attack is detected.
 
-## 📧 Contact
+| Type | File name | Size | Server (IP / MAC) | Client (IP / MAC) | Attacker (IP / MAC) | Sniffer (IP / MAC) | Attack |
+|---|---|---|---|---|---|---|---|
+| 0 | dos_certificate_inf_chain_loop | 7997 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 1967, time 32.3419 |
+| 0 | dos_function_call_null_deref | 8805 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 2275, time 31.7939 |
+| 0 | dos_hping3 | 3521545 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.201 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 4294, time 41.1575 |
+| 0 | dos_open_multiple_secure_channels | 21200 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 2224, time 32.9595 |
+| 0 | dos_translate_browse_path_call_stack_overflow | 8759 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 2366, time 31.7897 |
+| 0 | mitm_arp | 6059 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - / 00:09:5b:bd:64:06 | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 0 | mitm_port | 619200 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - / 00:09:5b:bd:64:06 | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 0 | normal_local_server | 6129 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 1 | dos_certificate_inf_chain_loop | 8811 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3470, time 32.2758 |
+| 1 | dos_function_call_null_deref | 52709 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 2814, time 30.9477 |
+| 1 | dos_hping3 | 2065664 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.201 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 4275, time 45.8889 |
+| 1 | dos_open_multiple_secure_channels | 22739 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3540, time 31.8013 |
+| 1 | dos_translate_browse_path_call_stack_overflow | 9362 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3397, time 31.7899 |
+| 1 | mitm_arp | 7650 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - / 00:09:5b:bd:64:06 | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 1 | mitm_port | 601152 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 00:09:5b:bd:64:06 | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 1 | normal_local_server | 13861 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 2 | dos_certificate_inf_chain_loop | 8686 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3225, time 32.3843 |
+| 2 | dos_function_call_null_deref | 53351 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3338, time 31.6231 |
+| 2 | dos_hping3 | 2203825 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.201 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 5566, time 44.9302 |
+| 2 | dos_open_multiple_secure_channels | 21213 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3292, time 31.7924 |
+| 2 | dos_translate_browse_path_call_stack_overflow | 9437 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | 192.168.164.103 / 00:09:5b:bd:64:06 | 192.168.164.115 / ac:1a:3d:a8:67:cd | packet 3464, time 31.1787 |
+| 2 | mitm_arp | 6407 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - / 00:09:5b:bd:64:06 | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 2 | mitm_port | 600451 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - / 00:09:5b:bd:64:06 | 192.168.164.110 / 00:be:43:34:b8:54 | - |
+| 2 | normal_local_server | 33034 | 192.168.164.101 / e4:5f:01:2e:1a:b6 | 192.168.164.102 / e4:5f:01:2e:1b:c1 | - | 192.168.164.110 / 00:be:43:34:b8:54 | - |
 
-:globe_with_meridians: [Jonathan T. da Silva][C] <br>
-:email: jonathantobias2009@hotmail.com <br>
-:package: [JonathanTSilva/FP-MastersDegree][D]
+## Docs
 
-<!-- MARKDOWN LINKS>
-<!-- SITES -->
-[A]: https://github.com/JonathanTSilva/FP-MastersDegree/blob/main/Docs/CONTRIBUTING.md
-[B]: https://github.com/JonathanTSilva/FP-MastersDegree/blob/main/LICENSE
-[C]: https://www.linkedin.com/in/JonathanTSilva/
-[D]: https://github.com/JonathanTSilva/FP-MastersDegree
+The API reference is a MkDocs site generated from the docstrings, with the entry page in [`docs/index.md`](docs/index.md). Build it locally with `uv sync --group docs` and `uv run mkdocs serve`. The conventions this repository follows are in the [handbook](https://github.com/JonathanTSilva/.github/blob/main/handbook/README.md).
 
-<!-- IMAGENS -->
+## Contributing
 
+See the [contributing guide](https://github.com/JonathanTSilva/.github/blob/main/CONTRIBUTING.md). Branches are named `<type>/<issue>-<slug>`, commits and PR titles follow Conventional Commits, and PRs are squash-merged. The project is inactive, so changes are unlikely to be reviewed quickly.
 
-## Information
+## License
 
-Below are the guide tables with essential information about the test files used in the development of this tool
+MIT. See [LICENSE](LICENSE).
 
-<!--<style type="text/css">
-.tg  {border-collapse:collapse;border-color:#ccc;border-spacing:0;border:1px solid #ddd;}
-.tg td{background-color:#fff;border-bottom-width:1px;border-color:#ccc;border-style:solid;border-top-width:1px; border-width:0px;color:#333;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px; word-break:normal;}
-.tg th{background-color:#f0f0f0;border-bottom-width:1px;border-color:#ccc;border-style:solid;border-top-width:1px; border-width:0px;color:#333;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden; padding:10px 5px;word-break:normal;}
-.tg .header{border-color:inherit;font-weight:bold;text-align:center;vertical-align:center}
-.tg .hd-name, .tg .name{width: 200px; word-wrap: break-word;}
-.tg tbody tr:nth-child(even) {background-color: #f2f2f2;}
-</style>-->
-<table class="tg">
-<thead>
-  <tr>
-    <th class="hd hd-type">Type</th>
-    <th class="hd hd-name">File Name</th>
-    <th class="hd hd-size">Size</th>
-    <th class="hd hd-server">Server</th>
-    <th class="hd hd-client">Client</th>
-    <th class="hd hd-attacker">Attacker</th>
-    <th class="hd hd-sniffer">Sniffer</th>
-    <th class="hd hd-attacker">Attack</th>
-  </tr>
-</thead>
-<tbody>
-    <tr>
-    <td rowspan="8" class="type">0</td>
-    <td class="name">dos_certificate_inf_chain_loop</td>
-    <td class="size">7997</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 1967<br>Time: 32.3419</td>
-  </tr>
-  <tr>
-    <td class="name">dos_function_call_null_deref</td>
-    <td class="size">8805</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 2275<br>Time: 31.7939</td>
-  </tr>
-  <tr>
-    <td class="name">dos_hping3</td>
-    <td class="size">3521545</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.201<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 4294<br>Time: 41.1575</td>
-  </tr>
-  <tr>
-    <td class="name">dos_open_multiple_secure_channels</td>
-    <td class="size">21200</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 2224<br>Time: 32.9595</td>
-  </tr>
-  <tr>
-    <td class="name">dos_translate_browse_path_call_stack_overflow</td>
-    <td class="size">8759</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 2366<br>Time: 31.7897</td>
-  </tr>
-  <tr>
-    <td class="name">mitm_arp</td>
-    <td class="size">6059</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td class="name">mitm_port</td>
-    <td class="size">619200</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td class="name">normal_local_server</td>
-    <td class="size">6129</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td rowspan="8" class="type">1</td>
-    <td class="name">dos_certificate_inf_chain_loop</td>
-    <td class="size">8811</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3470<br>Time: 32.2758</td>
-  </tr>
-  <tr>
-    <td class="name">dos_function_call_null_deref</td>
-    <td class="size">52709</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 2814<br>Time: 30.9477</td>
-  </tr>
-  <tr>
-    <td class="name">dos_hping3</td>
-    <td class="size">2065664</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.201<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 4275<br>Time: 45.8889</td>
-  </tr>
-  <tr>
-    <td class="name">dos_open_multiple_secure_channels</td>
-    <td class="size">22739</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3540<br>Time: 31.8013 </td>
-  </tr>
-  <tr>
-    <td class="name">dos_translate_browse_path_call_stack_overflow</td>
-    <td class="size">9362</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3397<br>Time: 31.7899</td>
-  </tr>
-  <tr>
-    <td class="name">mitm_arp</td>
-    <td class="size">7650</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td class="name">mitm_port</td>
-    <td class="size">601152</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker"><br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td class="name">normal_local_server</td>
-    <td class="size">13861</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td rowspan="8" class="type">2</td>
-    <td class="name">dos_certificate_inf_chain_loop</td>
-    <td class="size">8686</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3225<br>Time: 32.3843</td>
-  </tr>
-  <tr>
-    <td class="name">dos_function_call_null_deref</td>
-    <td class="size">53351</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3338<br>Time: 31.6231</td>
-  </tr>
-  <tr>
-    <td class="name">dos_hping3</td>
-    <td class="size">2203825</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.201<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 5566<br>Time: 44.9302</td>
-  </tr>
-  <tr>
-    <td class="name">dos_open_multiple_secure_channels</td>
-    <td class="size">21213</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3292<br>Time: 31.7924</td>
-  </tr>
-  <tr>
-    <td class="name">dos_translate_browse_path_call_stack_overflow</td>
-    <td class="size">9437</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">192.168.164.103<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.115<br>ac:1a:3d:a8:67:cd</td>
-    <td class="attack">Nº: 3464<br>Time: 31.1787</td>
-  </tr>
-  <tr>
-    <td class="name">mitm_arp</td>
-    <td class="size">6407</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td class="name">mitm_port</td>
-    <td class="size">600451</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-<br>00:09:5b:bd:64:06</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-  <tr>
-    <td class="name">normal_local_server</td>
-    <td class="size">33034</td>
-    <td class="server">192.168.164.101<br>e4:5f:01:2e:1a:b6</td>
-    <td class="client">192.168.164.102<br>e4:5f:01:2e:1b:c1</td>
-    <td class="attacker">-</td>
-    <td class="sniffer">192.168.164.110<br>00:be:43:34:b8:54</td>
-    <td class="attack">-</td>
-  </tr>
-</tbody>
-</table>
+Author: [Jonathan T. da Silva](https://github.com/JonathanTSilva).

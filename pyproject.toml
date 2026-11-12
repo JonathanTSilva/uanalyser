@@ -1,54 +1,57 @@
-[tool.poetry]
+[project]
 name = "opcua-traffic-analyser"
 version = "0.1.0"
 description = "Traffic analyser for intrusion detection in OPC UA networks"
-authors = ["Jonathan T. Silva <jonathantobias2009@hotmail.com>"]
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jonathan T. Silva" }]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=1.26.4",
+    "pandas>=2.2.1",
+    "scapy>=2.5.0",
+    "scikit-learn>=1.4.1",
+    "matplotlib>=3.8.3",
+    "seaborn>=0.13.2",
+    "plotly>=5.20.0",
+    "pyshark>=0.6",
+    "typer>=0.9.0",
+    "rich>=13.7.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-numpy = "^1.26.4"
-pandas = "^2.2.1"
-scapy = "^2.5.0"
-scikit-learn = "^1.4.1.post1"
-matplotlib = "^3.8.3"
-seaborn = "^0.13.2"
-plotly = "^5.20.0"
-pyshark = "^0.6"
-typer = "^0.9.0"
-rich = "^13.7.1"
+[dependency-groups]
+dev = ["ruff", "pyright", "pytest", "pytest-cov"]
+docs = [
+    "mkdocs-material>=9.5.13",
+    "mkdocstrings>=0.24.1",
+    "mkdocstrings-python>=1.9.0",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.1.1"
-pytest-cov = "^4.1.0"
-blue = "^0.9.1"
-isort = "^5.13.2"
-taskipy = "^1.12.2"
-
-
-[tool.poetry.group.doc.dependencies]
-mkdocs-material = "^9.5.13"
-mkdocstrings = "^0.24.1"
-mkdocstrings-python = "^1.9.0"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+# A research script collection, not an installable package: run it from the checkout.
+package = false
 
 [tool.pytest.ini_options]
-pythonpath = [
-    ".", "uanalyser", "opcua-traffic-analyser",
-]
-addopts = "--doctest-modules"
+pythonpath = [".", "uanalyser"]
+testpaths = ["tests", "uanalyser"]
+addopts = "--doctest-modules --cov=uanalyser"
 
-[tool.isort]
-profile = "black"
-line_length = 79
+[tool.coverage.run]
+source = ["uanalyser"]
 
-[tool.taskipy.tasks]
-lint = "blue --check --diff . | colordiff && isort --check --diff . | colordiff"
-docs = "mkdocs serve"
-pre_test = "task lint"
-test = "pytest -s -x --cov=uanalyser -vv"
-post_test  = "coverage html"
+[tool.ruff]
+line-length = 79
+extend-exclude = ["Data"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.pyright]
+include = ["uanalyser", "tests"]
+# Legacy research code, untyped helpers. Basic for now; strict is tracked in issue #6.
+typeCheckingMode = "basic"
+extraPaths = ["uanalyser"]

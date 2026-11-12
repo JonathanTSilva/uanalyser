@@ -42,6 +42,13 @@ CI runs the same checks through the shared workflows in [`.github`](https://gith
 - AI assistance is disclosed in the PR template: [AI assistance](https://github.com/JonathanTSilva/.github/blob/main/handbook/ai.md).
 - Whole handbook: [handbook](https://github.com/JonathanTSilva/.github/blob/main/handbook/README.md).
 
+## Project notes
+
+- Legacy research scripts, not an installable package (`[tool.uv] package = false`). Modules import each other as top-level names (`from paths import ...`), so `pytest` and pyright add `uanalyser/` to the import path.
+- `pytest` runs the doctests in `uanalyser/` as well as `tests/`.
+- `Data/` (captures and performance CSVs) is gitignored and not in the repository. Doctests that need it are marked `+SKIP`.
+- pyright is `basic`, not `strict`. Raising it is tracked in issue #6.
+
 ## Boundaries
 
 - Never commit secrets, tokens, `.env` files or real data.

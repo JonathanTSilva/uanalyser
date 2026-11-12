@@ -1,9 +1,10 @@
 import scapy.all as scapy
+from scapy.layers.inet import IP, TCP
 
 
 def calculate_throughput_and_packets(
     capture: scapy.PacketList, chronology_packets: list, period: float
-) -> list:
+) -> tuple[list, list]:
     """
     Calculates the throughput in kilobits per second (kbps) and the amount of packets per second for a given capture and chronology.
 
@@ -45,7 +46,9 @@ def calculate_throughput_and_packets(
                 break
         throughput_persecond.append(len_bytes)
         opcua_packets_persecond.append(packets)
-    return [value / 1024 for value in throughput_persecond], opcua_packets_persecond
+    return [
+        value / 1024 for value in throughput_persecond
+    ], opcua_packets_persecond
 
 
 def calculate_package_time_difference(
@@ -205,23 +208,14 @@ def define_communication_type(
         >>> define_communication_type(capture[1978], '192.168.164.101', ['192.168.164.192'])
         'Server to Attacker'
     """
-    if packet.haslayer(scapy.TCP):
-        if (
-            packet[scapy.IP].src == server_ip
-            and packet[scapy.IP].dst in clients_ip
-        ):
+    if packet.haslayer(TCP):
+        if packet[IP].src == server_ip and packet[IP].dst in clients_ip:
             return 'Server to Client'
-        if (
-            packet[scapy.IP].dst == server_ip
-            and packet[scapy.IP].src in clients_ip
-        ):
+        if packet[IP].dst == server_ip and packet[IP].src in clients_ip:
             return 'Client to Server'
         if detect_opcua_attack(packet, server_ip, clients_ip):
             return 'Attacker to Server'
-        if (
-            packet[scapy.IP].src in server_ip
-            and packet[scapy.IP].dst not in clients_ip
-        ):
+        if packet[IP].src in server_ip and packet[IP].dst not in clients_ip:
             return 'Server to Attacker'
     return 'Unknown'
 
@@ -253,11 +247,8 @@ def detect_opcua_attack(
         >>> detect_opcua_attack(capture[1966], '192.168.164.101', ['192.168.164.102'])
         True
     """
-    if packet.haslayer(scapy.TCP):
-        if (
-            packet[scapy.IP].dst == server_ip
-            and packet[scapy.IP].src not in clients_ip
-        ):
+    if packet.haslayer(TCP):
+        if packet[IP].dst == server_ip and packet[IP].src not in clients_ip:
             return True
     return False
 
@@ -289,7 +280,7 @@ def is_opcua_packet(packet: scapy.Packet, ports: list) -> bool:
         >>> is_opcua_packet(capture[733], [4840])
         True
     """
-    if packet.haslayer(scapy.IP):
-        if packet[scapy.IP].dport in ports or packet[scapy.IP].sport in ports:
+    if packet.haslayer(IP):
+        if packet[IP].dport in ports or packet[IP].sport in ports:
             return True
     return False
