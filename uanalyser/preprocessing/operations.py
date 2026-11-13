@@ -1,5 +1,5 @@
 import scapy.all as scapy
-from scapy.layers.inet import IP, TCP
+from scapy.layers.inet import IP, TCP, UDP
 
 
 def calculate_throughput_and_packets(
@@ -280,7 +280,8 @@ def is_opcua_packet(packet: scapy.Packet, ports: list) -> bool:
         >>> is_opcua_packet(capture[733], [4840])
         True
     """
-    if packet.haslayer(IP):
-        if packet[IP].dport in ports or packet[IP].sport in ports:
-            return True
+    for layer in (TCP, UDP):
+        if packet.haslayer(layer):
+            transport = packet[layer]
+            return transport.dport in ports or transport.sport in ports
     return False
