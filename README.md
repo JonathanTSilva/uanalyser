@@ -1,7 +1,7 @@
 <!-- brand:header:start -->
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/header-2f13d5d7-dark.svg">
-  <img alt="uanalyser: Traffic analyser for intrusion detection in OPC UA networks" src="assets/brand/header-2f13d5d7-light.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/header-da37f6b9-dark.svg">
+  <img alt="uanalyser: Traffic analyser for intrusion detection in OPC UA networks" src="assets/brand/header-da37f6b9-light.svg" width="100%">
 </picture>
 <!-- brand:header:end -->
 
