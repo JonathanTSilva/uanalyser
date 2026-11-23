@@ -20,18 +20,22 @@ from preprocessing.operations import (
     is_opcua_packet,
 )
 
-SERVER_IP = '192.168.164.101'
-CLIENTS_IPS = ['192.168.164.102']
 OPCUA_PORTS = [4840, 4841, 49320, 62541, 4897, 53530, 48050, 4885, 4855, 26543]
 # PCAPNG = f'{DATA_PCAPNG}/0-dos_certificate_inf_chain_loop.pcapng'
 
 
-def main(pcapng_file, *, show_plots=False):
+def main(pcapng_file, server_ip, client_ips, *, show_plots=False):
     """
     Entry point of the program.
 
     This function analyzes a PCAPNG file containing network traffic data.
     It extracts the attack name, opens the file, and performs various calculations and plotting.
+
+    Args:
+        pcapng_file (str): The capture to analyse.
+        server_ip (str): The IP address of the OPC UA server.
+        client_ips (list[str]): The IP addresses of the legitimate clients.
+        show_plots (bool): Open the plots instead of only saving them.
 
     Returns:
         None
@@ -61,7 +65,7 @@ def main(pcapng_file, *, show_plots=False):
         relative_time = calculate_package_time_difference(packet, first_packet)
 
         # Define the type of the package: request or response
-        comm_type = define_communication_type(packet, SERVER_IP, CLIENTS_IPS)
+        comm_type = define_communication_type(packet, server_ip, client_ips)
 
         # Clear reduntant data and flag OPC UA packets
         if index < 1:
@@ -87,7 +91,7 @@ def main(pcapng_file, *, show_plots=False):
         # TODO: Add an exception here
         # Detect the attack
         if (
-            detect_opcua_attack(packet, SERVER_IP, CLIENTS_IPS)
+            detect_opcua_attack(packet, server_ip, client_ips)
             and 'Packet index' not in attack
         ):
             attack['Relative time'] = relative_time
@@ -175,6 +179,6 @@ def process_all_pcapng_files(data_dir):
         # main(pcapng_file, show_plots=False)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     process_all_pcapng_files(DATA_PCAPNG)
     # main(PCAPNG, show_plots=True)
