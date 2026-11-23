@@ -19,8 +19,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 PORTS = [4840]
-SERVER_IP = '192.168.164.101'
-CLIENTS_IP = ['192.168.164.102']
+SERVER_IP = '192.0.2.101'
+CLIENTS_IP = ['192.0.2.102']
 
 
 def fuzz_one(data: bytes) -> None:
