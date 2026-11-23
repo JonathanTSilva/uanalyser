@@ -208,7 +208,7 @@ def define_communication_type(
         >>> define_communication_type(capture[1978], '192.168.164.101', ['192.168.164.192'])
         'Server to Attacker'
     """
-    if packet.haslayer(TCP):
+    if packet.haslayer(TCP) and packet.haslayer(IP):
         if packet[IP].src == server_ip and packet[IP].dst in clients_ip:
             return 'Server to Client'
         if packet[IP].dst == server_ip and packet[IP].src in clients_ip:
@@ -247,7 +247,7 @@ def detect_opcua_attack(
         >>> detect_opcua_attack(capture[1966], '192.168.164.101', ['192.168.164.102'])
         True
     """
-    if packet.haslayer(TCP):
+    if packet.haslayer(TCP) and packet.haslayer(IP):
         if packet[IP].dst == server_ip and packet[IP].src not in clients_ip:
             return True
     return False
