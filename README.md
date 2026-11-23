@@ -8,6 +8,7 @@
 <!-- badges:start -->
 [![Status](https://img.shields.io/badge/status-inactive-silver?style=flat-square)](https://www.repostatus.org/#inactive)
 [![CI](https://img.shields.io/github/actions/workflow/status/JonathanTSilva/uanalyser/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/JonathanTSilva/uanalyser/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/JonathanTSilva/uanalyser?style=flat-square)](https://github.com/JonathanTSilva/uanalyser/releases)
 [![Coverage](https://codecov.io/gh/JonathanTSilva/uanalyser/graph/badge.svg)](https://codecov.io/gh/JonathanTSilva/uanalyser)
 [![Quality](https://sonarcloud.io/api/project_badges/measure?project=JonathanTSilva_uanalyser&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JonathanTSilva_uanalyser)
 [![Scorecard](https://img.shields.io/ossf-scorecard/github.com/JonathanTSilva/uanalyser?style=flat-square&label=scorecard)](https://scorecard.dev/viewer/?uri=github.com/JonathanTSilva/uanalyser)
