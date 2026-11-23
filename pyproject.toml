@@ -40,6 +40,9 @@ addopts = "--doctest-modules --cov=uanalyser"
 [tool.coverage.run]
 source = ["uanalyser"]
 
+[tool.coverage.report]
+fail_under = 95
+
 [tool.ruff]
 line-length = 79
 extend-exclude = ["Data"]

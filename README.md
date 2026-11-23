@@ -48,13 +48,13 @@ Or open it in a dev container or GitHub Codespaces.
 
 ## Usage
 
-The code is a set of scripts run from the checkout, not an installable package. Analyse one capture with `main`, which writes the plots to `uanalyser/output/`:
+The code is a set of scripts run from the checkout, not an installable package. Analyse one capture with the CLI, which writes the plots to `uanalyser/output/`. Pass the IP address of the OPC UA server with `--server` and of each legitimate client with `--client` (repeat the option for several clients):
 
 ```sh
-PYTHONPATH=uanalyser uv run python -c "from main import main; main('tests/assets/0-dos_attack_example.pcapng')"
+PYTHONPATH=.:uanalyser uv run python uanalyser/cli/cli.py tests/assets/0-dos_attack_example.pcapng --server <server-ip> --client <client-ip>
 ```
 
-Capture file names follow `<type>-<attack name>.pcapng`, where the type is the OPC UA security mode: `0` for None, `1` for Sign and `2` for Sign & Encrypt. Pass `show_plots=True` to open the plots instead of only saving them. The full capture set and the performance CSV files used in the research are not in this repository: `uanalyser/paths.py` expects them under `Data/`.
+Capture file names follow `<type>-<attack name>.pcapng`, where the type is the OPC UA security mode: `0` for None, `1` for Sign and `2` for Sign & Encrypt. Add `--show-plots` to open the plots instead of only saving them. The full capture set and the performance CSV files used in the research are not in this repository: `uanalyser/paths.py` expects them under `Data/`.
 
 ## Docs
 
